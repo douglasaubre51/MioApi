@@ -1,0 +1,33 @@
+# IDE & Editors
+.vs/
+.vscode/
+*.user
+*.suo
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+*~
+
+# Build Outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.exe
+*.dll
+*.pdb
+
+# NuGet & Dependencies
+*.nuget.cache
+packages/
+node_modules/
+
+# Secrets & Configs
+appsettings.Development.json
+appsettings.Local.json
+.env
+launchSettings.json
+
+# OS & Logs
+.DS_Store
+Thumbs.db
+*.log
