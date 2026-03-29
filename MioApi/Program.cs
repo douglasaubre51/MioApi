@@ -17,8 +17,6 @@ builder.Services.AddScoped<ProjectRepository>();
 var app = builder.Build();
 
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
