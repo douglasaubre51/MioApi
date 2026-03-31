@@ -5,4 +5,7 @@ public record ProjectDto(
     string ShortDesc,
     string Desc,
     string ProjectSpec,
-    string Dependencies);
+    string Dependencies,
+    bool IsFinished,
+    bool IsReleased,
+    bool IsOngoing);

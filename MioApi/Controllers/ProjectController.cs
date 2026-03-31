@@ -51,7 +51,10 @@ public class ProjectController(ProjectRepository projectRepo) : ControllerBase
                 ProjectSpec = project.ProjectSpec,
                 ShortDesc = project.ShortDesc,
                 Desc = project.Desc,
-                Dependencies = project.Dependencies
+                Dependencies = project.Dependencies,
+                IsFinished = project.IsFinished,
+                IsOngoing = project.IsOngoing,
+                IsReleased = project.IsReleased
             });
 
             return Results.Ok(project);
@@ -64,12 +67,32 @@ public class ProjectController(ProjectRepository projectRepo) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public IResult Put(int id, Project project)
     {
+        try
+        {
+            Project? dbProject = _projectRepo.GetById(id);
+            if (dbProject is null)
+                return Results.BadRequest("Project doesnt exist!");
+
+            _projectRepo.Update(project);
+            return Results.Ok(new { Message = "Project updated successfully!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.BadRequest(new { Message = "Project update error!" });
+        }
     }
 
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public IResult Delete(int id)
     {
+        Project? dbProject = _projectRepo.GetById(id);
+        if (dbProject is null)
+            return Results.BadRequest("Project doesnt exist!");
+
+        _projectRepo.Delete(dbProject);
+        return Results.Ok(new { Message = "Project deleted successfully!" });
     }
 }

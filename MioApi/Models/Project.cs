@@ -8,4 +8,8 @@ public class Project
     public string Desc { get; set; } = string.Empty;
     public string ProjectSpec { get; set; } = string.Empty;
     public string Dependencies { get; set; } = string.Empty;
+
+    public bool IsOngoing { get; set; }
+    public bool IsReleased { get; set; }
+    public bool IsFinished { get; set; }
 }
