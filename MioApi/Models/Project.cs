@@ -12,4 +12,6 @@ public class Project
     public bool IsOngoing { get; set; }
     public bool IsReleased { get; set; }
     public bool IsFinished { get; set; }
+
+    public List<Tasks>? Tasks { get; set; }
 }
