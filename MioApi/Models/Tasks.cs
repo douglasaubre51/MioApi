@@ -6,6 +6,6 @@ public class Tasks
     public int ProjectId { get; set; }
     public Project Project { get; set; }
 
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
     public bool IsDone { get; set; }
 }

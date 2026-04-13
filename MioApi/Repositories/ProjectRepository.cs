@@ -7,7 +7,7 @@ public class ProjectRepository(ApplicationDbContext dbContext)
     public List<Project> GetAll()
         => [.. _dbContext.Projects.AsNoTracking()];
     public Project? GetById(int projectId)
-        => _dbContext.Projects.AsNoTracking()
+        => _dbContext.Projects.Include(project => project.Tasks)
         .SingleOrDefault(project => project.Id == projectId);
 
     public void Add(Project project)

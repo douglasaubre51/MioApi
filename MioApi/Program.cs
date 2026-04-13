@@ -11,7 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add Repositories:
 builder.Services.AddScoped<ProjectRepository>();
+builder.Services.AddScoped<TaskRepository>();
 
 
 var app = builder.Build();
