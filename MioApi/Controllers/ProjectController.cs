@@ -2,8 +2,11 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class ProjectController(ProjectRepository projectRepo) : ControllerBase
+public class ProjectController(
+    ProjectRepository projectRepo,
+    ApplicationDbContext context) : ControllerBase
 {
+    private readonly ApplicationDbContext _context = context;
     private readonly ProjectRepository _projectRepo = projectRepo;
 
     [HttpGet("all")]
@@ -75,7 +78,9 @@ public class ProjectController(ProjectRepository projectRepo) : ControllerBase
             if (dbProject is null)
                 return Results.BadRequest("Project doesnt exist!");
 
-            _projectRepo.Update(project);
+            _context.Entry(dbProject).CurrentValues.SetValues(project);
+            _context.SaveChanges();
+
             return Results.Ok(new { Message = "Project updated successfully!" });
         }
         catch (Exception ex)
