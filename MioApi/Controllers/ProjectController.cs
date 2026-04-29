@@ -26,6 +26,26 @@ public class ProjectController(
         }
     }
 
+    [HttpGet("all/bookmarks")]
+    public IResult GetAllBookmarked()
+    {
+        try
+        {
+            var projects = _projectRepo.GetAll()
+                .Where(project => project.IsBookmarked == true)
+                .ToList();
+
+            if (projects.Count is 0)
+                return Results.BadRequest("Empty list!");
+
+            return Results.Ok(projects);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest("Project GetAllBookmarks error: " + ex.Message);
+        }
+    }
+
     [HttpGet("{projectId}")]
     public IResult Get(int projectId)
     {
@@ -93,11 +113,80 @@ public class ProjectController(
     [HttpDelete("{id}")]
     public IResult Delete(int id)
     {
-        Project? dbProject = _projectRepo.GetById(id);
-        if (dbProject is null)
-            return Results.BadRequest("Project doesnt exist!");
+        try
+        {
+            Project? dbProject = _projectRepo.GetById(id);
+            if (dbProject is null)
+                return Results.BadRequest("Project doesnt exist!");
 
-        _projectRepo.Delete(dbProject);
-        return Results.Ok(new { Message = "Project deleted successfully!" });
+            _projectRepo.Delete(dbProject);
+
+            return Results.Ok(new { Message = "Project deleted successfully!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Project Delete error: " + ex.Message);
+            return Results.InternalServerError("Project Delete error!");
+        }
+    }
+
+    [HttpGet("{id}/add-bookmark")]
+    public IResult AddBookmark(int id)
+    {
+        try
+        {
+            Project? dbProject = _projectRepo.GetById(id);
+            if (dbProject is null)
+                return Results.BadRequest("Project doesnt exist!");
+
+            dbProject.IsBookmarked = true;
+            _projectRepo.Save();
+
+            return Results.Ok(new { Message = "Project bookmarked successfully!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("AddBookmark error: " + ex.Message);
+            return Results.InternalServerError("Add project bookmark error!");
+        }
+    }
+
+    [HttpGet("{id}/remove-bookmark")]
+    public IResult RemoveBookmark(int id)
+    {
+        try
+        {
+            Project? dbProject = _projectRepo.GetById(id);
+            if (dbProject is null)
+                return Results.BadRequest("Project doesnt exist!");
+
+            dbProject.IsBookmarked = false;
+            _projectRepo.Save();
+
+            return Results.Ok(new { Message = "Project bookmark removed successfully!" });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("RemoveBookmark error: " + ex.Message);
+            return Results.InternalServerError("Remove project bookmark error!");
+        }
+    }
+
+    [HttpGet("search/{projectTitle}")]
+    public IResult Search(string projectTitle)
+    {
+        try
+        {
+            Console.WriteLine("searched project: " + projectTitle);
+            var projects = _projectRepo.SearchByTitle(projectTitle);
+            if (projects.Count is 0)
+                return Results.BadRequest("Empty list!");
+
+            return Results.Ok(projects);
+        }
+        catch (Exception ex)
+        {
+            return Results.BadRequest("Project GetAll error: " + ex.Message);
+        }
     }
 }

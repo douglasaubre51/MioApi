@@ -25,6 +25,14 @@ public class ProjectRepository(ApplicationDbContext dbContext)
         _dbContext.Projects.Remove(project);
         Save();
     }
+
+    public List<Project> SearchByTitle(string title)
+        => _dbContext.Projects.Where(project => EF.Functions.Like(
+                    project.Title.ToLower(),
+                    $"%{title.ToLower()}%"))
+                .ToList();
+
+
     public void Save()
         => _dbContext.SaveChanges();
 }
