@@ -6,6 +6,7 @@ public class ProjectRepository(ApplicationDbContext dbContext)
 
     public List<Project> GetAll()
         => [.. _dbContext.Projects.AsNoTracking()];
+
     public Project? GetById(int projectId)
         => _dbContext.Projects.Include(project => project.Tasks)
         .SingleOrDefault(project => project.Id == projectId);
@@ -35,4 +36,7 @@ public class ProjectRepository(ApplicationDbContext dbContext)
 
     public void Save()
         => _dbContext.SaveChanges();
+
+    public IQueryable<Project> GetQueryable()
+        => _dbContext.Projects;
 }

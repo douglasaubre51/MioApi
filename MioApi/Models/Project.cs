@@ -14,6 +14,7 @@ public class Project
     public bool IsFinished { get; set; }
 
     public List<Tasks>? Tasks { get; set; }
+    public int UnfinishedTasksNo { get; set; }
 
     public bool IsBookmarked { get; set; }
 }

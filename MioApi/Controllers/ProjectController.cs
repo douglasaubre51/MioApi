@@ -15,14 +15,61 @@ public class ProjectController(
         try
         {
             var projects = _projectRepo.GetAll();
-            if (projects.Count is 0)
-                return Results.BadRequest("Empty list!");
+            if (projects.Count is 0) return Results.BadRequest("Empty list!");
 
             return Results.Ok(projects);
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             return Results.BadRequest("Project GetAll error: " + ex.Message);
+        }
+    }
+
+    // For ANEMONE CLIENT
+    [HttpGet("all/unfinished/task-count")]
+    public IResult GetAllWithUnfinishedTaskCount()
+    {
+        try
+        {
+            var projects = _projectRepo.GetQueryable()
+                                .Include(project => project.Tasks)
+                                .AsNoTracking()
+                                .ToList();
+
+            if (projects.Count is 0) return Results.BadRequest("Empty list!");
+
+            List<GetProjectDto> projectDtos = [];
+            foreach(var project in projects)
+            {
+                GetProjectDto dto = new()
+                {
+                    Id = project.Id,
+                    Title = project.Title,
+                    ShortDesc = project.ShortDesc,
+                    Desc = project.Desc,
+                    ProjectSpec = project.ProjectSpec
+                };
+
+                projectDtos.Add(dto);
+
+                // Before task prop is init!
+                if (project.Tasks is null) continue;
+
+                // Count unfinished tasks!
+                int taskCount = project.Tasks.Count(project => project.IsDone == false);
+                if (taskCount is 0) continue;
+
+                dto.UnfinishedTasksNo = taskCount;
+                dto.IsTaskAvailable = true;
+            }
+
+            return Results.Ok(projectDtos);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Results.BadRequest("Project GetAllWithUnfinishedTaskCount error: " + ex.Message);
         }
     }
 
@@ -32,11 +79,11 @@ public class ProjectController(
         try
         {
             var projects = _projectRepo.GetAll()
-                .Where(project => project.IsBookmarked == true)
-                .ToList();
+            .Where(project => project.IsBookmarked == true)
+            .ToList();
 
             if (projects.Count is 0)
-                return Results.BadRequest("Empty list!");
+            return Results.BadRequest("Empty list!");
 
             return Results.Ok(projects);
         }
@@ -53,7 +100,7 @@ public class ProjectController(
         {
             var project = _projectRepo.GetById(projectId);
             if (project is null)
-                return Results.BadRequest("Project doesnt exist!");
+            return Results.BadRequest("Project doesnt exist!");
 
             return Results.Ok(project);
         }
@@ -69,16 +116,16 @@ public class ProjectController(
         try
         {
             _projectRepo.Add(new Project
-            {
-                Title = project.Title,
-                ProjectSpec = project.ProjectSpec,
-                ShortDesc = project.ShortDesc,
-                Desc = project.Desc,
-                Dependencies = project.Dependencies,
-                IsFinished = project.IsFinished,
-                IsOngoing = project.IsOngoing,
-                IsReleased = project.IsReleased
-            });
+                {
+                    Title = project.Title,
+                    ProjectSpec = project.ProjectSpec,
+                    ShortDesc = project.ShortDesc,
+                    Desc = project.Desc,
+                    Dependencies = project.Dependencies,
+                    IsFinished = project.IsFinished,
+                    IsOngoing = project.IsOngoing,
+                    IsReleased = project.IsReleased
+                });
 
             return Results.Ok(project);
         }
@@ -96,7 +143,7 @@ public class ProjectController(
         {
             Project? dbProject = _projectRepo.GetById(id);
             if (dbProject is null)
-                return Results.BadRequest("Project doesnt exist!");
+            return Results.BadRequest("Project doesnt exist!");
 
             _context.Entry(dbProject).CurrentValues.SetValues(project);
             _context.SaveChanges();
@@ -117,7 +164,7 @@ public class ProjectController(
         {
             Project? dbProject = _projectRepo.GetById(id);
             if (dbProject is null)
-                return Results.BadRequest("Project doesnt exist!");
+            return Results.BadRequest("Project doesnt exist!");
 
             _projectRepo.Delete(dbProject);
 
@@ -137,7 +184,7 @@ public class ProjectController(
         {
             Project? dbProject = _projectRepo.GetById(id);
             if (dbProject is null)
-                return Results.BadRequest("Project doesnt exist!");
+            return Results.BadRequest("Project doesnt exist!");
 
             dbProject.IsBookmarked = true;
             _projectRepo.Save();
@@ -158,7 +205,7 @@ public class ProjectController(
         {
             Project? dbProject = _projectRepo.GetById(id);
             if (dbProject is null)
-                return Results.BadRequest("Project doesnt exist!");
+            return Results.BadRequest("Project doesnt exist!");
 
             dbProject.IsBookmarked = false;
             _projectRepo.Save();
@@ -180,7 +227,7 @@ public class ProjectController(
             Console.WriteLine("searched project: " + projectTitle);
             var projects = _projectRepo.SearchByTitle(projectTitle);
             if (projects.Count is 0)
-                return Results.BadRequest("Empty list!");
+            return Results.BadRequest("Empty list!");
 
             return Results.Ok(projects);
         }

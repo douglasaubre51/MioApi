@@ -26,6 +26,7 @@ public class TaskController(
             return Results.BadRequest("task GetAll error: " + ex.Message);
         }
     }
+
     [HttpGet("{projectId}/project/all-tasks")]
     public IResult GetAllByProjectId(int projectId)
     {
